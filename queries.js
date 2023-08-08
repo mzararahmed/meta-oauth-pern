@@ -30,14 +30,14 @@ const createUser = (request, response) => {
   const { name, userId, accessToken } = request.body;
 
   pool.query(
-    'INSERT INTO users (name, userId) VALUES ($1, $2, $3) RETURNING *',
+    'INSERT INTO users (name, userid, accesstoken) VALUES ($1, $2, $3) RETURNING *',
     [name, userId, accessToken],
     (error, results) => {
       if (error) {
         throw error;
       }
       console.log(results.rows[0])
-      response.status(201).send(`User added with ID: ${results.rows[0].accessToken}`);
+      response.status(201).send(`User added with ID: ${results.rows[0].accesstoken}`);
     }
   );
 };

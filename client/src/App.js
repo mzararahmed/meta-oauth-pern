@@ -12,12 +12,12 @@ const App = () => {
   }, []);
 
   const responseFacebook = async (response) => {
-    console.log(response);
-    let saveUser = await axios.post('http://localhost:3000/users', {
+    let data = {
       accessToken: response.accessToken,
-      userId: response.userId,
+      userId: response.userID,
       name: response.name
-    })
+    };
+    let saveUser = await axios.post('http://localhost:3000/users', data)
     console.log(saveUser)
   };
 
