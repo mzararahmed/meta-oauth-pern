@@ -39,11 +39,13 @@ const App = () => {
         {
           fbResponse && (
           <>
-            <div>
-              <p>Your Facebook Access Token:{fbResponse}</p>
-              <p>Profile Picture:{fbResponse}</p>
-              <div style={{margin:"0 auto"}}>
-                <img src={imgURL} alt="profile picture"/>
+            <div style={{margin:"0 auto"}} >
+              <div style={{maxWidth:'400px'}}>
+                <p style={{maxWidth:'400px'}}>Your Facebook Access Token:{fbResponse}</p>
+                <p>Profile Picture:</p>
+                <div>
+                  <img src={imgURL} alt="profile"/>
+                </div>
               </div>
             </div>
           </>)
