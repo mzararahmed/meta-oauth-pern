@@ -29,17 +29,25 @@ const getUserById = (request, response) => {
 const createUser = (request, response) => {
   const { name, userId, accessToken } = request.body;
 
-  pool.query(
-    'INSERT INTO users (name, userid, accesstoken) VALUES ($1, $2, $3) RETURNING *',
-    [name, userId, accessToken],
-    (error, results) => {
-      if (error) {
-        throw error;
-      }
-      console.log(results.rows[0])
-      response.status(201).send(`User added with ID: ${results.rows[0].accesstoken}`);
+  pool.query('SELECT * FROM users WHERE userId = $1', [userId], (error, results) => {
+    if(error){
+      console.log(error)
+      pool.query(
+        'INSERT INTO users (name, userid, accesstoken) VALUES ($1, $2, $3) RETURNING *',
+        [name, userId, accessToken],
+        (error, results) => {
+          if (error) {
+            throw error;
+          }
+          console.log(results.rows[0])
+          response.status(201).send(`User added with ID: ${results.rows[0].accesstoken}`);
+        }
+      );
     }
-  );
+    response.status(200).json(results.rows);
+  })
+
+  
 };
 
 const updateUser = (request, response) => {
@@ -59,13 +67,13 @@ const updateUser = (request, response) => {
 };
 
 const deleteUser = (request, response) => {
-  const id = parseInt(request.params.id);
+  const userId = parseInt(request.params.id);
 
-  pool.query('DELETE FROM users WHERE id = $1', [id], (error, results) => {
+  pool.query('DELETE FROM users WHERE userId = $1', [userId], (error, results) => {
     if (error) {
       throw error;
     }
-    response.status(200).send(`User deleted with ID: ${id}`);
+    response.status(200).send(`User deleted with ID: ${userId}`);
   });
 };
 

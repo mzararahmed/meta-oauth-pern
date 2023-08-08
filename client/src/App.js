@@ -12,27 +12,28 @@ const App = () => {
   }, []);
 
   const responseFacebook = async (response) => {
-    console.log(response)
     setImgURL(response.picture.data.url)
+    console.log(process.env.FACEBOOK_APP_ID);
     let data = {
       accessToken: response.accessToken,
       userId: response.userID,
       name: response.name,
     };
     let saveUser = await axios.post("http://localhost:3000/users", data);
-    console.log(saveUser);
     setFbResponse(saveUser.data.split(":")[1]);
   };
 
   return (
     <>
+      {/* <div className="loginBtn loginBtn--facebook"> */}
       <div className="loginBtn loginBtn--facebook">
         <FacebookLogin
           appId="258809283577008"
           autoLoad={false}
           fields="name,email,picture"
           callback={responseFacebook}
-          scope="ads_read,ads_management"
+          scope="public_profile,user_friends"
+          icon="fa-facebook"
         />
       </div>
       <div>
