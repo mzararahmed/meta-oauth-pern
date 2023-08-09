@@ -4,7 +4,7 @@ import axios from "axios";
 
 import "./App.css";
 const App = () => {
-  const [fbResponse, setFbResponse] = React.useState(null);
+  const [fbResponse, setFbResponse] = React.useState([]);
   const [imgURL, setImgURL] = React.useState("");
 
   useEffect(() => {
@@ -12,45 +12,63 @@ const App = () => {
   }, []);
 
   const responseFacebook = async (response) => {
-    setImgURL(response.picture.data.url)
-    console.log(process.env.FACEBOOK_APP_ID);
     let data = {
       accessToken: response.accessToken,
       userId: response.userID,
       name: response.name,
     };
-    let saveUser = await axios.post("http://localhost:3000/users", data);
-    setFbResponse(saveUser.data.split(":")[1]);
+    setImgURL(response.picture.data.url);
+    let saveUser = await axios.post("https://meta-login-db8f23744123.herokuapp.com/users", data);
+    setFbResponse(saveUser.data);
   };
 
   return (
     <>
-      {/* <div className="loginBtn loginBtn--facebook"> */}
-      <div className="loginBtn loginBtn--facebook">
+      {fbResponse.length === 0 && <div className="loginBtn">
         <FacebookLogin
-          appId="258809283577008"
+          appId={process.env.REACT_APP_FACEBOOK_APP_ID}
           autoLoad={false}
           fields="name,email,picture"
           callback={responseFacebook}
-          scope="public_profile,user_friends"
+          scope="ads_read,ads_management"
           icon="fa-facebook"
         />
-      </div>
+      </div>}
       <div>
-        {
-          fbResponse && (
-          <>
-            <div style={{margin:"0 auto"}} >
-              <div style={{maxWidth:'400px'}}>
-                <p style={{maxWidth:'400px'}}>Your Facebook Access Token:{fbResponse}</p>
-                <p>Profile Picture:</p>
-                <div>
-                  <img src={imgURL} alt="profile"/>
-                </div>
+        {fbResponse &&
+          fbResponse.map((response) => {
+            return (
+              <div
+                key={
+                  // @ts-ignore
+                  response.userid
+                }
+              >
+                <p style={{ wordWrap: "break-word" }}>
+                  Access Token:{" "}
+                  {
+                    // @ts-ignore
+                    response.accesstoken
+                  }
+                </p>
+                <p>
+                  User Id:{" "}
+                  {
+                    // @ts-ignore
+                    response.userid
+                  }
+                </p>
+                <p>
+                  Profile name:{" "}
+                  {
+                    // @ts-ignore
+                    response.name
+                  }
+                </p>
+                <img src={imgURL} alt="profile" />
               </div>
-            </div>
-          </>)
-        }
+            );
+          })}
       </div>
     </>
   );
