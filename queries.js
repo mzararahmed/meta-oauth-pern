@@ -1,13 +1,23 @@
-const Pool = require('pg').Pool;
-const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'api2',
-  password: 'postgres',
-  port: 5432,
+const { Client } = require('pg');
+// const Pool = require('pg').Pool;
+// const pool = new Pool({
+//   user: 'postgres',
+//   host: 'localhost',
+//   database: 'api2',
+//   password: 'postgres',
+//   port: 5432,
+// });
+
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+})
+client.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected to ElephantSQL PostgresQL DB!");
 });
+
 const getUsers = (request, response) => {
-  pool.query('SELECT * FROM users ORDER BY id ASC', (error, results) => {
+  client.query('SELECT * FROM users ORDER BY id ASC', (error, results) => {
     if (error) {
       throw error;
     }
@@ -18,7 +28,7 @@ const getUsers = (request, response) => {
 const getUserById = (request, response) => {
   const id = parseInt(request.params.id);
 
-  pool.query('SELECT * FROM users WHERE id = $1', [id], (error, results) => {
+  client.query('SELECT * FROM users WHERE id = $1', [id], (error, results) => {
     if (error) {
       throw error;
     }
@@ -28,24 +38,29 @@ const getUserById = (request, response) => {
 
 const createUser = (request, response) => {
   const { name, userId, accessToken } = request.body;
-
-  pool.query('SELECT * FROM users WHERE userId = $1', [userId], (error, results) => {
-    if(error){
-      console.log(error)
-      pool.query(
-        'INSERT INTO users (name, userid, accesstoken) VALUES ($1, $2, $3) RETURNING *',
-        [name, userId, accessToken],
-        (error, results) => {
-          if (error) {
-            throw error;
+  try{
+    client.query('SELECT * FROM users WHERE userId = $1', [userId], (error, results) => {
+      console.log(results)
+      if(error || !results.rowCount){
+        console.error(error)
+        client.query(
+          'INSERT INTO users (name, userid, accesstoken) VALUES ($1, $2, $3) RETURNING *',
+          [name, userId, accessToken],
+          (error, results) => {
+            if (error) {
+              throw error;
+            }
+            response.status(201).send(`User added with ID: ${results.rows[0].accesstoken}`);
           }
-          console.log(results.rows[0])
-          response.status(201).send(`User added with ID: ${results.rows[0].accesstoken}`);
-        }
-      );
-    }
-    response.status(200).json(results.rows);
-  })
+        );
+      }
+      else response.status(200).json(results.rows);
+    })
+  }
+  catch(error){
+    console.error(error)
+  }
+  
 
   
 };
@@ -54,7 +69,7 @@ const updateUser = (request, response) => {
   const id = parseInt(request.params.id);
   const { name, email } = request.body;
 
-  pool.query(
+  client.query(
     'UPDATE users SET name = $1, email = $2 WHERE id = $3',
     [name, email, id],
     (error, results) => {
@@ -69,7 +84,7 @@ const updateUser = (request, response) => {
 const deleteUser = (request, response) => {
   const userId = parseInt(request.params.id);
 
-  pool.query('DELETE FROM users WHERE userId = $1', [userId], (error, results) => {
+  client.query('DELETE FROM users WHERE userId = $1', [userId], (error, results) => {
     if (error) {
       throw error;
     }
