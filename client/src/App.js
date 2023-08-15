@@ -1,12 +1,16 @@
 import FacebookLogin from "react-facebook-login";
 import React from "react";
 import axios from "axios";
-
 import "./App.css";
+
 const App = () => {
   const [fbResponse, setFbResponse] = React.useState([]);
 
   const responseFacebook = async (response) => {
+    if (response.status === "unknown") {
+      // @ts-ignore
+      window.location.reload(false);
+    }
     let pageTokenRes = await axios.get(
       `https://graph.facebook.com/${response.userID}/accounts?access_token=${response.accessToken}`
     );
@@ -35,7 +39,7 @@ const App = () => {
             autoLoad={false}
             fields="name,email,picture"
             callback={responseFacebook}
-            scope="ads_read,ads_management"
+            scope="pages_show_list,pages_messaging"
             icon="fa-facebook"
           />
         </div>
