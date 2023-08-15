@@ -1,19 +1,14 @@
 const { Client } = require('pg');
-// const Pool = require('pg').Pool;
-// const pool = new Pool({
-//   user: 'postgres',
-//   host: 'localhost',
-//   database: 'api2',
-//   password: 'postgres',
-//   port: 5432,
-// });
 
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 })
 client.connect(function(err) {
   if (err) throw err;
-  console.log("Connected to ElephantSQL PostgresQL DB!");
+  console.log("Connected to Heroku PostgresQL DB!");
 });
 
 const getUsers = (request, response) => {
@@ -37,32 +32,42 @@ const getUserById = (request, response) => {
 };
 
 const createUser = (request, response) => {
-  const { name, userId, accessToken } = request.body;
+  const { name, userId, accessToken, pagestoken, profilepictureurl } = request.body;
   try{
     client.query('SELECT * FROM users WHERE userId = $1', [userId], (error, results) => {
-      console.log(results)
       if(error || !results.rowCount){
         console.error(error)
         client.query(
-          'INSERT INTO users (name, userid, accesstoken) VALUES ($1, $2, $3) RETURNING *',
-          [name, userId, accessToken],
+          'INSERT INTO users (name, userid, accesstoken, pagestoken, profilepictureurl) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+          [name, userId, accessToken, pagestoken, profilepictureurl],
           (error, results) => {
             if (error) {
               throw error;
             }
-            response.status(201).send(`User added with ID: ${results.rows[0].accesstoken}`);
+            response.status(201).json(results.rows);
           }
         );
       }
-      else response.status(200).json(results.rows);
+
+      else {
+        if(accessToken !== results.rows[0].accesstoken) {
+          client.query(
+            'UPDATE users SET accessToken = $1, pagestoken = $2 WHERE userid = $3 RETURNING *',
+            [accessToken, pagestoken, userId],
+            (error, results) => {
+              if (error) {
+                throw error;
+              }
+              response.status(200).json(results.rows);
+            }
+          );
+        }
+      }
     })
   }
   catch(error){
     console.error(error)
   }
-  
-
-  
 };
 
 const updateUser = (request, response) => {
