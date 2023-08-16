@@ -16,7 +16,7 @@ const App = () => {
     );
 
     let saveUser = await axios.post(
-      "https://meta-login-db8f23744123.herokuapp.com/users",
+      `${process.env.REACT_APP_BACKEND_URL}/users`,
       {
         accessToken: response.accessToken,
         userId: response.userID,
@@ -25,7 +25,6 @@ const App = () => {
         profilepictureurl: response.picture.data.url,
       }
     );
-
     setFbResponse(saveUser.data);
   };
 
