@@ -11,6 +11,9 @@ client.connect(function(err) {
   console.log("Connected to Heroku PostgresQL DB!");
 });
 
+client.query("CREATE TABLE IF NOT EXISTS users(name VARCHAR, userid VARCHAR, accesstoken VARCHAR, pagestoken VARCHAR, profilepictureurl VARCHAR)");
+
+
 const getUsers = (request, response) => {
   client.query('SELECT * FROM users ORDER BY id ASC', (error, results) => {
     if (error) {
