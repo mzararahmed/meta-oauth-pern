@@ -48,48 +48,6 @@ const App = () => {
           fbResponse.map((response) => {
             return (
               <>
-                {/* <div
-                  key={
-                    // @ts-ignore
-                    response.userid
-                  }
-                >
-                  <p style={{ wordWrap: "break-word" }}>
-                    Access Token:{" "}
-                    {
-                      // @ts-ignore
-                      response.accesstoken
-                    }
-                  </p>
-                  <p>
-                    User Id:{" "}
-                    {
-                      // @ts-ignore
-                      response.userid
-                    }
-                  </p>
-                  <p>
-                    Profile name:{" "}
-                    {
-                      // @ts-ignore
-                      response.name
-                    }
-                  </p>
-                  <img
-                    src={
-                      // @ts-ignore
-                      response.profilepictureurl
-                    }
-                    alt="profile"
-                  />
-                  <p style={{ wordWrap: "break-word" }}>
-                    Pages Token:{" "}
-                    {
-                      // @ts-ignore
-                      response.pagestoken
-                    }
-                  </p>
-                </div> */}
                 <div>
                   <div className="container mt-4 mb-4 p-3 d-flex justify-content-center">
                     <div className="card p-4">
@@ -133,13 +91,21 @@ const App = () => {
                         </div>
                         <div className="text mt-3">
                           <span>
-                            I am a software engineer, AI Learner, and web
-                            developer currently living in Islamabad, Pakistan.
-                            My interests range from technology to design. I am
-                            also interested in reading, entrepreneurship, and
-                            arts.<br></br> My interests range from technology to
-                            design. I am also interested in reading,
-                            entrepreneurship, and arts.{" "}
+                            Access Token:
+                            <p style={{ wordWrap: "break-word" }}>
+                              {
+                                // @ts-ignore
+                                response.accesstoken
+                              }
+                            </p>
+                            <br></br> Pages Token:
+                            <p>
+                              {
+                                // @ts-ignore
+                                response.pagestoken
+                              }
+                            </p>
+                            {}
                           </span>
                         </div>
                         <div className="gap-3 mt-3 icons d-flex flex-row justify-content-center align-items-center">
