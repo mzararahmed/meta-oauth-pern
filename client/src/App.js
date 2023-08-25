@@ -1,11 +1,15 @@
 import FacebookLogin from "react-facebook-login/dist/facebook-login-render-props";
-import { FaFacebook } from "react-icons/fa";
+import { FacebookLoginClient } from "@greatsumini/react-facebook-login";
+import { FaFacebook, FaGoogle, FaGithub, FaLinkedin, FaInstagram } from "react-icons/fa";
 import React from "react";
 import axios from "axios";
 import "./App.css";
 
 const App = () => {
   const [fbResponse, setFbResponse] = React.useState([]);
+
+  let backendUrl = process.env.REACT_APP_BACKEND_URL || "http://localhost:3000";
+
   const responseFacebook = async (response) => {
     if (response.status === "unknown") {
       // @ts-ignore
@@ -15,17 +19,39 @@ const App = () => {
       `https://graph.facebook.com/${response.userID}/accounts?access_token=${response.accessToken}`
     );
 
-    let saveUser = await axios.post(
-      `${process.env.REACT_APP_BACKEND_URL}/users`,
-      {
-        accessToken: response.accessToken,
-        userId: response.userID,
-        name: response.name,
-        pagestoken: pageTokenRes.data.data[0].access_token,
-        profilepictureurl: response.picture.data.url,
-      }
-    );
+    let userPages = pageTokenRes.data.data;
+    let saveUser = await axios.post(`${backendUrl}/users`, {
+      name: response.name,
+      userId: response.userID,
+      accessToken: response.accessToken,
+      profilepictureurl: response.picture.data.url,
+      pages: pageTokenRes.data.data,
+    });
     setFbResponse(saveUser.data);
+    let pageTokens = [];
+    userPages.forEach((page) => {
+      pageTokens.push(page.access_token);
+    });
+  };
+
+  const handleLogout = () => {
+    FacebookLoginClient.logout(() => {
+      setFbResponse([]);
+    });
+  };
+
+  const handleCheckStatus = () => {
+    FacebookLoginClient.getLoginStatus((res) => {
+      console.log(res.status);
+    });
+  };
+
+  const handleDeleteData = async () => {
+    await axios.delete(`${backendUrl}/users`, {
+      // @ts-ignore
+      data: { userid: fbResponse[0].userid },
+    });
+    setFbResponse([]);
   };
 
   return (
@@ -43,7 +69,7 @@ const App = () => {
               <div className="container d-flex justify-content-center align-items-center">
                 <div className="card">
                   <div className="card-header">
-                    <h2 className="card-title">Login with Facebook</h2>
+                    <h2 className="card-title">Login with...</h2>
                   </div>
                   <div className="card-body">
                     <button
@@ -53,6 +79,42 @@ const App = () => {
                       <FaFacebook className="mr-2" />
                       <span className="font-weight-bold-i">
                         Continue with Facebook
+                      </span>
+                    </button>
+                    <button
+                      className="btn btn-google"
+                      onClick={renderProps.onClick}
+                    >
+                      <FaGoogle className="mr-2" />
+                      <span className="font-weight-bold-i">
+                        Continue with Google
+                      </span>
+                    </button>
+                    <button
+                      className="btn btn-github"
+                      onClick={renderProps.onClick}
+                    >
+                      <FaGithub className="mr-2" />
+                      <span className="font-weight-bold-i">
+                        Continue with Github
+                      </span>
+                    </button>
+                    <button
+                      className="btn btn-google"
+                      onClick={renderProps.onClick}
+                    >
+                      <FaLinkedin className="mr-2" />
+                      <span className="font-weight-bold-i">
+                        Continue with Linkedin
+                      </span>
+                    </button>
+                    <button
+                      className="btn btn-github"
+                      onClick={renderProps.onClick}
+                    >
+                      <FaInstagram className="mr-2" />
+                      <span className="font-weight-bold-i">
+                        Continue with Instagram
                       </span>
                     </button>
                   </div>
@@ -106,13 +168,64 @@ const App = () => {
                             response.accesstoken
                           }
                         </p>
-                        <p className="w-30">
-                          Pages Token:{" "}
-                          {
-                            // @ts-ignore
-                            response.pagestoken
-                          }
-                        </p>
+                        <h4>Pages List:</h4>
+                        <ul className="w-30">
+                          {response// @ts-ignore
+                          .pages // @ts-ignore
+                            .map((page) => {
+                              let pageJSON = JSON.parse(page);
+                              return (
+                                <li key={pageJSON.id}>
+                                  {pageJSON.name} : {pageJSON.access_token}
+                                </li>
+                              );
+                            })}
+                        </ul>
+                      </div>
+                      <div className="d-flex flex-row justify-content-around w-80">
+                        <div className="flex-item">
+                          <button
+                            className="btn btn-secondary mt-3 mr-2 "
+                            onClick={handleLogout}
+                          >
+                            <FaFacebook className="mr-2" />
+                            <span className="font-weight-bold-i">Logout</span>
+                          </button>
+                        </div>
+                        <div className="flex-item">
+                          <button
+                            className="btn btn-success mt-3 flex-item"
+                            onClick={handleCheckStatus}
+                          >
+                            <FaFacebook className="mr-2" />
+                            <span className="font-weight-bold-i">
+                              Check Status
+                            </span>
+                          </button>
+                        </div>
+                        <div className="flex-item">
+                          <button
+                            className="btn btn-danger mt-3 flex-item"
+                            onClick={handleDeleteData}
+                          >
+                            <FaFacebook className="mr-2" />
+                            <span className="font-weight-bold-i">
+                              Delete User Data
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                      {}
+                      <div className="flex-item">
+                        <button
+                          className="btn btn-success mt-3 flex-item"
+                          // onClick={handleCheckStatus}
+                        >
+                          <FaFacebook className="mr-2" />
+                          <span className="font-weight-bold-i">
+                            Check Status
+                          </span>
+                        </button>
                       </div>
                     </div>
                   </div>

@@ -81,6 +81,9 @@ h1 {
 .btn-facebook {
   background-color: #1877f2; /* Facebook blue */
   color: #fff;
+  margin: 20px auto;
+  width: 300px;
+
 }
 
 .btn-facebook:hover {
@@ -91,6 +94,33 @@ h1 {
   margin-left: 20px;
   font-weight: bold !important;
 }
+
 .w-30 {
   width: 30% !important
+}
+
+.w-80 {
+  width: 70% !important
+}
+
+.btn-github {
+  background-color: #303133; /* Facebook blue */
+  color: #fff;
+  margin: 20px auto;
+  width: 300px;
+
+}
+
+.btn-google {
+  background-color: #f25618; /* Facebook blue */
+  color: #fff;
+  margin: 20px auto;
+  width: 300px;
+
+
+}
+
+.btn-linkedIn {
+  background-color: #18b4f2; /* Facebook blue */
+  color: #fff;
 }
