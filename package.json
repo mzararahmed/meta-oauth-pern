@@ -1,26 +1,39 @@
 {
-  "name": "postgres-node",
+  "name": "node-postgres-react-facebook",
+  "description": "PERN(PostgresQL, ExpressJS, ReactJS, NodeJS) facebook authentication Meta OAuth - Tokens saved in DB by @mzararahmed",
+  "private": "true",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "node index.js",
+    "postinstall": "cd client && npm i --legacy-peer-deps",
+    "watch": "concurrently -k -p \"[{name}]\" -n \"Node,React\" -c \"green.bold,blue.bold\" \"nodemon index.js\"  \"cd client && npm start\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --legacy-peer-deps --prefix client && npm run build --prefix client"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "node",
+    "react",
+    "oauth",
+    "express",
+    "postgresQL",
+    "meta-oauth",
+    "facebook-oauth",
+    "facebook-login",
+    "facebook-graph-api"
+  ],
+  "author": "md.zarar.ahmed@gmail.com",
   "license": "ISC",
+  "repository": {
+    "directory": "/",
+    "type": "git",
+    "url": "https://github.com/mzararahmed/node-postgres"
+  },
   "dependencies": {
-    "@fortawesome/fontawesome-svg-core": "^6.4.2",
-    "@fortawesome/free-regular-svg-icons": "^6.4.2",
-    "@fortawesome/free-solid-svg-icons": "^6.4.2",
-    "@fortawesome/react-fontawesome": "^0.2.0",
-    "@greatsumini/react-facebook-login": "^3.3.3",
+    "concurrently": "^8.2.0",
+    "express": "^4.18.1",
+    "dotenv": "^16.3.1",
     "axios": "^1.4.0",
     "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.1",
-    "pg": "^8.11.2",
-    "react-icons": "^4.10.1"
+    "pg": "^8.11.2"
   }
 }

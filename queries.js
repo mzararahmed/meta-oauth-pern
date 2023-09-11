@@ -12,11 +12,11 @@ client.connect(function (err) {
 });
 
 client.query(
-  "CREATE TABLE IF NOT EXISTS users(name VARCHAR, userid VARCHAR, accesstoken VARCHAR, profilepictureurl VARCHAR, pages text[])");
+  "CREATE TABLE IF NOT EXISTS users(name VARCHAR, userid VARCHAR, accesstoken VARCHAR, profilepictureurl VARCHAR, pages text[])"
+);
 
 const createUser = (request, response) => {
-  const { name, userId, accessToken, profilepictureurl, pages } =
-    request.body;
+  const { name, userId, accessToken, profilepictureurl, pages } = request.body;
   try {
     client.query(
       "SELECT * FROM users WHERE userId = $1",
@@ -58,16 +58,19 @@ const createUser = (request, response) => {
 const deleteUser = (request, response) => {
   const { userid } = request.body;
 
-  client.query('DELETE FROM users WHERE userid = $1', [userid], (error, results) => {
-    if (error) {
-      throw error;
+  client.query(
+    "DELETE FROM users WHERE userid = $1",
+    [userid],
+    (error, results) => {
+      if (error) {
+        throw error;
+      }
+      response.status(200).send(`User deleted with ID: ${userid}`);
     }
-    console.log(userid)
-    response.status(200).send(`User deleted with ID: ${userid}`);
-  });
+  );
 };
 
 module.exports = {
   createUser,
-  deleteUser
+  deleteUser,
 };
