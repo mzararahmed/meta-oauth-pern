@@ -1,5 +1,5 @@
 {
-  "name": "node-postgres-react-facebook",
+  "name": "meta-oauth-pern-backend",
   "description": "PERN(PostgresQL, ExpressJS, ReactJS, NodeJS) facebook authentication Meta OAuth - Tokens saved in DB by @mzararahmed",
   "private": "true",
   "version": "1.0.0",
